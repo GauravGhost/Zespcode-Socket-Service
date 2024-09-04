@@ -3,7 +3,7 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const Redis = require('ioredis')
 
-const { PORT } = require('./config/serverConfig');
+// const { PORT } = require('./config/serverConfig');
 
 const app = express();
 
@@ -29,6 +29,7 @@ io.on("connection", (socket) => {
 });
 
 app.post('/sendPayload', async (req, res) => {
+    console.log("req data", req.body);
     const { userId, payload } = req.body;
     if (!userId || !payload) {
         res.status(400).send("Invalid request");
@@ -43,6 +44,6 @@ app.post('/sendPayload', async (req, res) => {
     }
 });
 
-httpServer.listen(PORT, () => {
+httpServer.listen(6000, () => {
     console.log("Server is running on port 6000");
 });
