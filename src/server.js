@@ -1,15 +1,15 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const redisCache = require('./config/redisConfig')
-
-// const { PORT } = require('./config/serverConfig');
+const redisCache = require('./config/redisConfig');
+const { PORT } = require("./config/serverConfig");
 
 const app = express();
 
 app.use(express.json());
 
 const httpServer = createServer(app);
+
 const io = new Server(httpServer, {});
 
 io.on("connection", (socket) => {
@@ -35,13 +35,17 @@ app.post('/sendPayload', async (req, res) => {
     const socketId = await redisCache.get(userId);
 
     if (socketId) {
-        io.to(socketId).emit('submissionPayloadResponse', payload); 
+        io.to(socketId).emit('submissionPayloadResponse', payload);
         return res.send("payload sent successfully");
     } else {
         return res.status(404).send("User not connected");
     }
 });
 
-httpServer.listen(6000, () => {
-    console.log("Server is running on port 6000");
+httpServer.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT} \n Redis connected!`);
+    redisCache.on('error', (err) => {
+        console.error('Error connecting to redis server:', err);
+        process.exit(1);
+    });
 });
