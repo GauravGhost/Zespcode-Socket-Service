@@ -1,7 +1,7 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const Redis = require('ioredis')
+const redisCache = require('./config/redisConfig')
 
 // const { PORT } = require('./config/serverConfig');
 
@@ -10,8 +10,6 @@ const app = express();
 app.use(express.json());
 
 const httpServer = createServer(app);
-
-const redisCache = new Redis();
 const io = new Server(httpServer, {});
 
 io.on("connection", (socket) => {
