@@ -10,13 +10,19 @@ app.use(express.json());
 
 const httpServer = createServer(app);
 
-const io = new Server(httpServer, {});
+const io = new Server(httpServer, {
+    cors: {
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST"],
+        credentials: true,
+    }
+});
 
 io.on("connection", (socket) => {
+
     socket.on("setUserId", (userId) => {
         console.log("Setting user id to connection id", userId, socket.id);
         redisCache.set(userId, socket.id);
-
     });
 
     socket.on("getConnectionId", async (userId) => {
